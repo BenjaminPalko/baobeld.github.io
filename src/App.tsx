@@ -1,18 +1,26 @@
 import { Canvas } from "@react-three/fiber";
-import { Web } from "./components";
+import { Web, WebProps } from "./components";
 import { OrbitControls } from "@react-three/drei";
-import { useMemo } from "react";
-import { SpriteMaterial, TextureLoader } from "three";
+const menu: WebProps["menu"] = [
+  {
+    iconPath: "./text/about.svg",
+    onClick: () => console.log("about"),
+  },
+  {
+    iconPath: "./text/contact.svg",
+    onClick: () => console.log("contact"),
+  },
+  {
+    iconPath: "./text/experience.svg",
+    onClick: () => console.log("experience"),
+  },
+  {
+    iconPath: "./text/projects.svg",
+    onClick: () => console.log("projects"),
+  },
+];
 
 function App() {
-  const sprites = useMemo(() => {
-    const textureLoader = new TextureLoader();
-    const material = new SpriteMaterial({
-      map: textureLoader.load("./moon_full.png"),
-    });
-    return [material, material, material, material];
-  }, []);
-
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Canvas>
@@ -25,8 +33,7 @@ function App() {
           intensity={Math.PI}
         />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        {/* <SampleBox /> */}
-        <Web length={2} items={sprites} />
+        <Web length={2} menu={menu} />
         <OrbitControls enablePan={false} enableZoom={false} />
       </Canvas>
     </div>
