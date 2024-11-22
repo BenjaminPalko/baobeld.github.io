@@ -1,32 +1,61 @@
 import { Canvas } from "@react-three/fiber";
 import { Web, WebProps } from "./components";
 import { OrbitControls } from "@react-three/drei";
-const menu: WebProps["menu"] = [
-  {
-    iconPath: "./text/about.svg",
-    onClick: () => console.log("about"),
-  },
-  {
-    iconPath: "./text/contact.svg",
-    onClick: () => console.log("contact"),
-  },
-  {
-    iconPath: "./text/experience.svg",
-    onClick: () => console.log("experience"),
-  },
-  {
-    iconPath: "./text/projects.svg",
-    onClick: () => console.log("projects"),
-  },
-  {
-    iconPath: "./text/library.svg",
-    onClick: () => console.log("library"),
-  },
-];
+import { ReactNode, useState } from "react";
+import { Modal } from "./components/Modal";
 
 function App() {
+  const [open, setOpen] = useState(false);
+  const [content, setContent] = useState<ReactNode>(null);
+
+  const menu: WebProps["menu"] = [
+    {
+      iconPath: "./text/about.svg",
+      onClick: () => {
+        setOpen(true);
+        setContent(<h1>ABOUT</h1>);
+      },
+    },
+    {
+      iconPath: "./text/contact.svg",
+      onClick: () => {
+        setOpen(true);
+        setContent(<h1>CONTACT</h1>);
+      },
+    },
+    {
+      iconPath: "./text/experience.svg",
+      onClick: () => {
+        setOpen(true);
+        setContent(<h1>EXPERIENCE</h1>);
+      },
+    },
+    {
+      iconPath: "./text/projects.svg",
+      onClick: () => {
+        setOpen(true);
+        setContent(<h1>PROJECTS</h1>);
+      },
+    },
+    {
+      iconPath: "./text/library.svg",
+      onClick: () => {
+        setOpen(true);
+        setContent(<h1>MY LIBRARY</h1>);
+      },
+    },
+  ];
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
+      <Modal
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setContent(null);
+        }}
+        content={content}
+      />
       <Canvas>
         <ambientLight intensity={Math.PI / 2} />
         <spotLight
