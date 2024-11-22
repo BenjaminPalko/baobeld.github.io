@@ -18,6 +18,10 @@ const menu: WebProps["menu"] = [
     iconPath: "./text/projects.svg",
     onClick: () => console.log("projects"),
   },
+  {
+    iconPath: "./text/library.svg",
+    onClick: () => console.log("library"),
+  },
 ];
 
 function App() {
