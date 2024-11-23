@@ -1,7 +1,7 @@
 import { GroupProps } from "@react-three/fiber";
 import { Fragment, useMemo } from "react";
 import { Vector3 } from "three";
-import { Node } from "./Node";
+import { MenuNode } from "./MenuNode";
 
 function FibonacciSphere(center: Vector3, length: number, count: number) {
   const points: Vector3[] = [];
@@ -23,15 +23,15 @@ function FibonacciSphere(center: Vector3, length: number, count: number) {
   return points;
 }
 
-export interface WebProps extends GroupProps {
+export interface MenuProps extends GroupProps {
   length: number;
-  menu: {
+  items: {
     iconPath: string;
     onClick: () => void;
   }[];
 }
 
-export const Web = function ({ length, menu }: WebProps) {
+export const Menu = function ({ length, items: menu }: MenuProps) {
   const points = useMemo(
     () => FibonacciSphere(new Vector3(0, 0, 0), length, menu.length),
     [length, menu],
@@ -41,7 +41,7 @@ export const Web = function ({ length, menu }: WebProps) {
     <group>
       {menu.map((item, index) => (
         <Fragment key={index}>
-          <Node
+          <MenuNode
             origin={new Vector3(0, 0)}
             position={points[index]}
             textPath={item.iconPath}

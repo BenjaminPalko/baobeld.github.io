@@ -1,5 +1,5 @@
 import { Canvas, useLoader } from "@react-three/fiber";
-import { Modal, Web, WebProps } from "./components";
+import { Menu, MenuProps, Modal } from "./components";
 import { OrbitControls, useFBX } from "@react-three/drei";
 import { ReactNode, useState } from "react";
 import { Vector3 } from "three";
@@ -9,7 +9,7 @@ function App() {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState<ReactNode>(null);
 
-  const menu: WebProps["menu"] = [
+  const menu: MenuProps["items"] = [
     {
       iconPath: "./text/about.svg",
       onClick: () => {
@@ -69,7 +69,7 @@ function App() {
         </object3D>
         <ambientLight intensity={Math.PI / 2} />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Web length={2.5} menu={menu} />
+        <Menu length={2.5} items={menu} />
         <OrbitControls
           enablePan={false}
           enableZoom={false}

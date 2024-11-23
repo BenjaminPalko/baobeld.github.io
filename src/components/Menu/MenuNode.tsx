@@ -1,20 +1,34 @@
-import { useMemo, useState } from "react";
-import { Vector3, TextureLoader } from "three";
-import { Line } from "./Line";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Vector3, TextureLoader, BufferGeometry } from "three";
 
-interface NodeProps {
+export const Line = function ({ points }: { points: [Vector3, Vector3] }) {
+  const ref = useRef<BufferGeometry>(null);
+
+  useEffect(() => {
+    ref.current?.setFromPoints(points);
+  }, [ref, points]);
+
+  return (
+    <line>
+      <bufferGeometry ref={ref} />
+      <lineBasicMaterial color={"white"} />
+    </line>
+  );
+};
+
+interface MenuNodeProps {
   origin: Vector3;
   position: Vector3;
   textPath: string;
   onClick: () => void;
 }
 
-export const Node = function ({
+export const MenuNode = function ({
   origin,
   position,
   textPath,
   onClick,
-}: NodeProps) {
+}: MenuNodeProps) {
   const textureLoader = useMemo(() => new TextureLoader(), []);
   const [hover, setHover] = useState(false);
   const [scale, setScale] = useState(new Vector3(1, 1));
