@@ -1,8 +1,9 @@
-import { Canvas } from "@react-three/fiber";
-import { Web, WebProps } from "./components";
-import { OrbitControls } from "@react-three/drei";
+import { Canvas, useLoader } from "@react-three/fiber";
+import { Modal, Web, WebProps } from "./components";
+import { OrbitControls, useFBX } from "@react-three/drei";
 import { ReactNode, useState } from "react";
-import { Modal } from "./components/Modal";
+import { Vector3 } from "three";
+import { OBJLoader } from "three/examples/jsm/Addons.js";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -46,6 +47,9 @@ function App() {
     },
   ];
 
+  const scene = useLoader(OBJLoader, "./scene.obj");
+  useFBX("./scene.obj");
+
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Modal
@@ -56,18 +60,22 @@ function App() {
         }}
         content={content}
       />
-      <Canvas>
+      <Canvas style={{ cursor: 'url("./cursors/resize_c_cross.png")' }}>
+        <object3D position={new Vector3(0, 3, 0)} scale={new Vector3(6, 1, 6)}>
+          <primitive object={scene.clone()} />
+        </object3D>
+        <object3D position={new Vector3(0, -3, 0)} scale={new Vector3(6, 1, 6)}>
+          <primitive object={scene.clone()} />
+        </object3D>
         <ambientLight intensity={Math.PI / 2} />
-        <spotLight
-          position={[10, 10, 10]}
-          angle={0.15}
-          penumbra={1}
-          decay={0}
-          intensity={Math.PI}
-        />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Web length={2} menu={menu} />
-        <OrbitControls enablePan={false} enableZoom={false} />
+        <Web length={2.5} menu={menu} />
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          minPolarAngle={3 * (Math.PI / 8)}
+          maxPolarAngle={5 * (Math.PI / 8)}
+        />
       </Canvas>
     </div>
   );
