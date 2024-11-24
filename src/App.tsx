@@ -1,61 +1,50 @@
 import { Canvas, useLoader } from "@react-three/fiber";
 import { Menu, MenuProps, Modal } from "./components";
-import { OrbitControls, useFBX } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { ReactNode, useState } from "react";
-import { Vector3 } from "three";
+import { TextureLoader, Vector3 } from "three";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
 
 function App() {
-  const [open, setOpen] = useState(false);
   const [content, setContent] = useState<ReactNode>(null);
+
+  const iconTexture = useLoader(TextureLoader, "./icons/button_round_line.svg");
 
   const menu: MenuProps["items"] = [
     {
-      iconPath: "./text/about.svg",
-      onClick: () => {
-        setOpen(true);
-        setContent(<h1>ABOUT</h1>);
-      },
+      icon: iconTexture,
+      label: useLoader(TextureLoader, "./text/about.svg"),
+      onClick: () => setContent(<h1>ABOUT</h1>),
     },
     {
-      iconPath: "./text/contact.svg",
-      onClick: () => {
-        setOpen(true);
-        setContent(<h1>CONTACT</h1>);
-      },
+      icon: iconTexture,
+      label: useLoader(TextureLoader, "./text/contact.svg"),
+      onClick: () => setContent(<h1>CONTACT</h1>),
     },
     {
-      iconPath: "./text/experience.svg",
-      onClick: () => {
-        setOpen(true);
-        setContent(<h1>EXPERIENCE</h1>);
-      },
+      icon: iconTexture,
+      label: useLoader(TextureLoader, "./text/experience.svg"),
+      onClick: () => setContent(<h1>EXPERIENCE</h1>),
     },
     {
-      iconPath: "./text/projects.svg",
-      onClick: () => {
-        setOpen(true);
-        setContent(<h1>PROJECTS</h1>);
-      },
+      icon: iconTexture,
+      label: useLoader(TextureLoader, "./text/projects.svg"),
+      onClick: () => setContent(<h1>PROJECTS</h1>),
     },
     {
-      iconPath: "./text/library.svg",
-      onClick: () => {
-        setOpen(true);
-        setContent(<h1>MY LIBRARY</h1>);
-      },
+      icon: iconTexture,
+      label: useLoader(TextureLoader, "./text/library.svg"),
+      onClick: () => setContent(<h1>MY LIBRARY</h1>),
     },
   ];
 
   const scene = useLoader(OBJLoader, "./scene.obj");
-  useFBX("./scene.obj");
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Modal
-        open={open}
+        open={content !== null}
         onClose={() => {
-          setOpen(false);
           setContent(null);
         }}
         content={content}
@@ -69,7 +58,7 @@ function App() {
         </object3D>
         <ambientLight intensity={Math.PI / 2} />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Menu length={2.5} items={menu} />
+        <Menu items={menu} />
         <OrbitControls
           enablePan={false}
           enableZoom={false}

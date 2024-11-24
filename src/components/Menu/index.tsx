@@ -1,7 +1,7 @@
-import { GroupProps } from "@react-three/fiber";
-import { Fragment, useMemo } from "react";
-import { Vector3 } from "three";
-import { MenuNode } from "./MenuNode";
+import { useFrame } from "@react-three/fiber";
+import { ReactNode, useMemo, useState } from "react";
+import { Texture, Vector3 } from "three";
+import { MenuItem } from "./MenuItem";
 
 function FibonacciSphere(center: Vector3, length: number, count: number) {
   const points: Vector3[] = [];
@@ -23,32 +23,37 @@ function FibonacciSphere(center: Vector3, length: number, count: number) {
   return points;
 }
 
-export interface MenuProps extends GroupProps {
-  length: number;
-  items: {
-    iconPath: string;
-    onClick: () => void;
-  }[];
+export interface MenuItem {
+  icon: Texture;
+  label: Texture;
+  onClick: () => void;
 }
 
-export const Menu = function ({ length, items: menu }: MenuProps) {
+export interface MenuProps {
+  items: MenuItem[];
+}
+
+export const Menu = function ({ items }: MenuProps) {
+  const [menuItems, setMenuItems] = useState<ReactNode[]>([]);
   const points = useMemo(
-    () => FibonacciSphere(new Vector3(0, 0, 0), length, menu.length),
-    [length, menu],
+    () => FibonacciSphere(new Vector3(), 2.5, items.length),
+    [items],
   );
 
-  return (
-    <group>
-      {menu.map((item, index) => (
-        <Fragment key={index}>
-          <MenuNode
-            origin={new Vector3(0, 0)}
-            position={points[index]}
-            textPath={item.iconPath}
-            onClick={item.onClick}
-          />
-        </Fragment>
-      ))}
-    </group>
-  );
+  useFrame((state, delta) => {
+    const cameraPosition = state.camera.position;
+    setMenuItems(
+      items.map((item, index) => (
+        <MenuItem
+          key={index}
+          {...item}
+          position={points[index]}
+          origin={new Vector3()}
+          active={points[index].clone().sub(cameraPosition).length() < 3}
+        />
+      )),
+    );
+  });
+
+  return <group>{menuItems}</group>;
 };
