@@ -9,6 +9,7 @@ export interface MenuItemProps {
   origin: Vector3;
   position: Vector3;
   active: boolean;
+  opacity: number;
 }
 
 export const MenuItem = function (item: MenuItemProps) {
@@ -32,7 +33,11 @@ export const MenuItem = function (item: MenuItemProps) {
     <>
       <group position={item.position}>
         <sprite scale={scale}>
-          <spriteMaterial map={item.icon} color={"white"} />
+          <spriteMaterial
+            map={item.icon}
+            color={"white"}
+            opacity={item.opacity}
+          />
         </sprite>
         <sprite
           scale={new Vector3(item.label.image.width, item.label.image.height)
