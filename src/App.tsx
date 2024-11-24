@@ -2,8 +2,7 @@ import { Canvas, useLoader } from "@react-three/fiber";
 import { Menu, MenuProps, Modal } from "./components";
 import { OrbitControls } from "@react-three/drei";
 import { ReactNode, useState } from "react";
-import { TextureLoader, Vector3 } from "three";
-import { OBJLoader } from "three/examples/jsm/Addons.js";
+import { TextureLoader } from "three";
 
 function App() {
   const [content, setContent] = useState<ReactNode>(null);
@@ -38,7 +37,7 @@ function App() {
     },
   ];
 
-  const scene = useLoader(OBJLoader, "./scene.obj");
+  // const scene = useLoader(OBJLoader, "./scene.obj");
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
@@ -50,20 +49,20 @@ function App() {
         content={content}
       />
       <Canvas style={{ cursor: 'url("./cursors/resize_c_cross.png")' }}>
-        <object3D position={new Vector3(0, 3, 0)} scale={new Vector3(6, 1, 6)}>
-          <primitive object={scene.clone()} />
-        </object3D>
-        <object3D position={new Vector3(0, -3, 0)} scale={new Vector3(6, 1, 6)}>
-          <primitive object={scene.clone()} />
-        </object3D>
+        {/* <object3D position={new Vector3(0, 3, 0)} scale={new Vector3(6, 1, 6)}> */}
+        {/*   <primitive object={scene.clone()} /> */}
+        {/* </object3D> */}
+        {/* <object3D position={new Vector3(0, -3, 0)} scale={new Vector3(6, 1, 6)}> */}
+        {/*   <primitive object={scene.clone()} /> */}
+        {/* </object3D> */}
         <ambientLight intensity={Math.PI / 2} />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
         <Menu items={menu} />
         <OrbitControls
           enablePan={false}
           enableZoom={false}
-          minPolarAngle={3 * (Math.PI / 8)}
-          maxPolarAngle={5 * (Math.PI / 8)}
+          minPolarAngle={2 * (Math.PI / 8)}
+          maxPolarAngle={6 * (Math.PI / 8)}
         />
       </Canvas>
     </div>

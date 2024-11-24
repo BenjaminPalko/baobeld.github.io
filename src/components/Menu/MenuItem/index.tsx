@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useEffect, useRef, useState } from "react";
 import { BufferGeometry, Texture, Vector3 } from "three";
+import { Mathf } from "../../../mathf";
 
 export interface MenuItemProps {
   icon: Texture;
   label: Texture;
-  onClick: () => void;
   origin: Vector3;
   position: Vector3;
   active: boolean;
@@ -17,16 +18,28 @@ export const MenuItem = function (item: MenuItemProps) {
     ref.current?.setFromPoints([item.origin, item.position]);
   }, [item]);
 
+  const [scale, setScale] = useState(0.15);
+
+  useFrame((state, delta) => {
+    if (item.active) {
+      setScale((current) => Mathf.Lerp(current, 0.45, delta * 20));
+    } else {
+      setScale((current) => Mathf.Lerp(current, 0.15, delta * 20));
+    }
+  });
+
   return (
     <>
       <group position={item.position}>
-        <sprite scale={item.active ? 0.45 : 0.3}>
-          <spriteMaterial
-            map={item.icon}
-            color={item.active ? "green" : "white"}
-          />
+        <sprite scale={scale}>
+          <spriteMaterial map={item.icon} color={"white"} />
         </sprite>
-        <sprite scale={new Vector3(0.4, 0.25)} position={new Vector3(0, -0.35)}>
+        <sprite
+          scale={new Vector3(item.label.image.width, item.label.image.height)
+            .normalize()
+            .multiplyScalar(1)}
+          position={new Vector3(0, -0.35)}
+        >
           <spriteMaterial map={item.label} />
         </sprite>
       </group>
