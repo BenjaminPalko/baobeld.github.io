@@ -48,16 +48,10 @@ function App() {
         }}
         content={content}
       />
-      <Canvas style={{ cursor: 'url("./cursors/resize_c_cross.png")' }}>
-        {/* <object3D position={new Vector3(0, 3, 0)} scale={new Vector3(6, 1, 6)}> */}
-        {/*   <primitive object={scene.clone()} /> */}
-        {/* </object3D> */}
-        {/* <object3D position={new Vector3(0, -3, 0)} scale={new Vector3(6, 1, 6)}> */}
-        {/*   <primitive object={scene.clone()} /> */}
-        {/* </object3D> */}
+      <Canvas>
         <ambientLight intensity={Math.PI / 2} />
         <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-        <Menu items={menu} onSelected={(item) => item.onClick()} />
+        <Menu items={menu} size={2.5} />
         <OrbitControls
           enablePan={false}
           enableZoom={false}

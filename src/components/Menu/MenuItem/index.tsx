@@ -1,7 +1,8 @@
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
-import { BufferGeometry, Texture, Vector3 } from "three";
+import { useRef, useState } from "react";
+import { Group, Texture, Vector3 } from "three";
 import { Mathf } from "../../../mathf";
+import { Line } from "../../Line";
 
 export interface MenuItemProps {
   icon: Texture;
@@ -9,17 +10,13 @@ export interface MenuItemProps {
   origin: Vector3;
   position: Vector3;
   active: boolean;
-  opacity: number;
 }
 
 export const MenuItem = function (item: MenuItemProps) {
-  const ref = useRef<BufferGeometry>(null);
-
-  useEffect(() => {
-    ref.current?.setFromPoints([item.origin, item.position]);
-  }, [item]);
-
   const [scale, setScale] = useState(0.15);
+
+  const ref = useRef<Group>(null);
+  const [opacity, setOpacity] = useState(0);
 
   useFrame((state, delta) => {
     if (item.active) {
@@ -27,17 +24,21 @@ export const MenuItem = function (item: MenuItemProps) {
     } else {
       setScale((current) => Mathf.Lerp(current, 0.15, delta * 20));
     }
+    if (ref.current?.position) {
+      ref.current.position.lerp(item.position, delta * 2);
+      setOpacity(ref.current.position.length() / item.position.length());
+    }
   });
 
   return (
     <>
-      <group position={item.position}>
+      <Line
+        points={[item.origin, ref.current?.position ?? new Vector3()]}
+        opacity={opacity}
+      />
+      <group ref={ref}>
         <sprite scale={scale}>
-          <spriteMaterial
-            map={item.icon}
-            color={"white"}
-            opacity={item.opacity}
-          />
+          <spriteMaterial map={item.icon} color={"white"} opacity={opacity} />
         </sprite>
         <sprite
           scale={new Vector3(item.label.image.width, item.label.image.height)
@@ -48,10 +49,6 @@ export const MenuItem = function (item: MenuItemProps) {
           <spriteMaterial map={item.label} />
         </sprite>
       </group>
-      <line>
-        <bufferGeometry ref={ref} />
-        <lineBasicMaterial color={"white"} />
-      </line>
     </>
   );
 };

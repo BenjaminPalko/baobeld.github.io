@@ -1,83 +1,70 @@
 import { useFrame } from "@react-three/fiber";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Texture, Vector3 } from "three";
 import { Mathf } from "../../mathf";
-import { MenuItem, MenuItemProps } from "./MenuItem";
-
-export interface MenuItem {
-  icon: Texture;
-  label: Texture;
-  onClick: () => void;
-}
+import { MenuItem } from "./MenuItem";
 
 export interface MenuProps {
-  items: MenuItem[];
-  onSelected: (item: MenuItem) => void;
+  items: {
+    icon: Texture;
+    label: Texture;
+    onClick: () => void;
+  }[];
+  size: number;
 }
 
-export const Menu = function ({ items, onSelected }: MenuProps) {
-  const [loaded, setLoaded] = useState(false);
-  const [menuItems, setMenuItems] = useState<MenuItemProps[]>([]);
-  const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
-  const [points, setPoints] = useState<Vector3[]>([]);
+export const Menu = function ({ items, size }: MenuProps) {
   const spherePoints = useMemo(
-    () => Mathf.FibonacciSphere(new Vector3(), 2.5, items.length),
-    [items],
+    () => Mathf.FibonacciSphere(new Vector3(), size, items.length),
+    [items, size],
   );
+  const [loaded, setLoaded] = useState(false);
+  const [points, setPoints] = useState<Vector3[]>([]);
+  const [activeItem, setActiveItem] = useState<number>(-1);
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.code === "Space" && activeItem !== -1) {
+      const zero = new Vector3(0, 0, 0);
+      setPoints(new Array(items.length).fill(zero));
+    }
+  }
 
   useEffect(() => {
     if (!loaded) {
+      setPoints(spherePoints);
       setLoaded(true);
-      setMenuItems(
-        items.map((item, index) => ({
-          ...item,
-          position: spherePoints[index],
-          origin: new Vector3(),
-          active: true,
-          opacity: 1,
-        })),
-      );
+      document.addEventListener("keydown", onKeyDown);
     }
-    return () => setLoaded(false);
-  }, [loaded, items, spherePoints, setLoaded, setMenuItems]);
-
-  document.addEventListener("keydown", (event) => {
-    if (event.code === "Space" && activeItem) {
-      onSelected(activeItem);
-    }
-  });
+    return () => {
+      setLoaded(false);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [loaded, items, spherePoints, setLoaded]);
 
   useFrame((state, delta) => {
-    if (!loaded) {
-      return;
-    }
     const cameraPosition = state.camera.position;
-    let newActive: MenuItem | null = null;
-    setMenuItems(
-      items.map((item, index) => {
-        const isClose = points[index].clone().sub(cameraPosition).length() < 3;
-        if (isClose) {
-          newActive = item;
+    setActiveItem(
+      points.reduce((prev, current, index) => {
+        if (cameraPosition.clone().sub(current).length() < 3) {
+          return index;
         }
-
-        const position = points[index].lerp(spherePoints[index], delta * 20);
-
-        return {
-          ...item,
-          position: position,
-          origin: new Vector3(),
-          active: true,
-          opacity: 1,
-        };
-      }),
+        return prev;
+      }, -1),
     );
-    setActiveItem(newActive);
   });
 
   return (
     <group>
-      {menuItems.map((item, index) => (
-        <MenuItem key={index} {...item} />
+      {items.map((item, index) => (
+        <MenuItem
+          key={JSON.stringify(points[index])}
+          origin={new Vector3(0, 0, 0)}
+          position={points[index]}
+          active={activeItem === index}
+          opacity={1}
+          icon={item.icon}
+          label={item.label}
+        />
       ))}
     </group>
   );
