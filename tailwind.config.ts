@@ -1,3 +1,4 @@
+import daisyui from 'daisyui';
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -7,5 +8,8 @@ export default {
 		extend: {}
 	},
 
-	plugins: []
+	plugins: [daisyui],
+	daisyui: {
+		logs: false
+	}
 } satisfies Config;
